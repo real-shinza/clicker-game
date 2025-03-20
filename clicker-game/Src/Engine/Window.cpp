@@ -1,7 +1,9 @@
-#include "window.h"
+#include "Window.h"
 
 Window::Window(HINSTANCE hInstance, int nCmdShow)
 {
+    isClosed = false;
+
     wc = {};
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
@@ -25,8 +27,26 @@ Window::Window(HINSTANCE hInstance, int nCmdShow)
     ShowWindow(hWnd, nCmdShow);
 }
 
-Window::~Window() {
+Window::~Window()
+{
     UnregisterClass(wc.lpszClassName, wc.hInstance);
+}
+
+void Window::Update()
+{
+    MSG message;
+    if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+    {
+        if (message.message == WM_QUIT)
+        {
+            isClosed = true;
+        }
+        else
+        {
+            TranslateMessage(&message);
+            DispatchMessage(&message);
+        }
+    }
 }
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

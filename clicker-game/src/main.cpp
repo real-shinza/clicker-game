@@ -1,9 +1,14 @@
 #include <windows.h>
-#include "window/window.h"
+#include "Engine/Engine.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
-	Window window(hInstance, nCmdShow);
+    Engine::Initialize(hInstance, nCmdShow);
 
-	return 0;
+	while (Engine::IsClosedWindow() == false)
+	{
+		Engine::Update();
+	}
+
+    return 0;
 }
