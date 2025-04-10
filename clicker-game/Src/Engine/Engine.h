@@ -2,7 +2,8 @@
 #define ENGINE_H
 
 #include "Window.h"
-#include "Renderer.h"
+#include "Graphic.h"
+#include "../Game/Game.h"
 
 class Engine
 {
@@ -18,7 +19,7 @@ public:
     /// <summary>
     /// エンジン更新
     /// </summary>
-    void Update();
+    void Update(Game* game);
 
     /// <summary>
     /// エンジン解放
@@ -27,7 +28,7 @@ public:
 
 private:
     Window m_Window;
-    Renderer m_Renderer;
+    Graphic m_Graphic;
 };
 
 #endif
