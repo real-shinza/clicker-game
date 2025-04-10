@@ -6,18 +6,18 @@
 class Engine
 {
 public:
-    static void Initialize(HINSTANCE hInstance, int nCmdShow);
-    static void Update();
+    /// <summary>
+    /// ã‚¨ãƒ³ã‚¸ãƒ³åˆæœŸåŒ–
+    /// </summary>
+    void Init(HINSTANCE hInstance, int nCmdShow);
 
     /// <summary>
-    /// ƒEƒBƒ“ƒhƒE‚ª•Â‚¶‚ç‚ê‚½‚©‚Ç‚¤‚©‚ğ•Ô‚·
+    /// ã‚¨ãƒ³ã‚¸ãƒ³æ›´æ–°
     /// </summary>
-    static bool IsClosedWindow() { return instance->window->GetIsClosed(); }
+    void Update();
 
 private:
-    static Engine* instance;
-
-    Window* window;
+    Window m_Window;
 };
 
 #endif

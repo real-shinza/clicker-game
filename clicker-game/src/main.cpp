@@ -1,14 +1,11 @@
-#include <windows.h>
 #include "Engine/Engine.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
-    Engine::Initialize(hInstance, nCmdShow);
+    Engine engine;
 
-	while (Engine::IsClosedWindow() == false)
-	{
-		Engine::Update();
-	}
+    engine.Init(hInstance, nCmdShow);
+    engine.Update();
 
     return 0;
 }

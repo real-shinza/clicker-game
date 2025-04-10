@@ -1,15 +1,14 @@
-#include <stdio.h>
 #include "Engine.h"
 
-Engine* Engine::instance = nullptr;
-
- void Engine::Initialize(HINSTANCE hInstance, int nCmdShow)
+void Engine::Init(HINSTANCE hInstance, int nCmdShow)
 {
-	instance = new Engine();
-	instance->window = new Window(hInstance, nCmdShow);
+    m_Window.Init(hInstance, nCmdShow);
 }
 
- void Engine::Update()
- {
-	 instance->window->Update();
- }
+void Engine::Update()
+{
+    while (true)
+    {
+        if (m_Window.Update()) return;
+    }
+}

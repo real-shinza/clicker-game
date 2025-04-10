@@ -1,16 +1,19 @@
 #include "Window.h"
 
-Window::Window(HINSTANCE hInstance, int nCmdShow)
+void Window::Init(HINSTANCE hInstance, int nCmdShow)
 {
-    isClosed = false;
-
-    wc = {};
+    // ウィンドウクラスの登録
+    WNDCLASSEX wc = {};
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = L"Clicker Game";
-    RegisterClass(&wc);
+    RegisterClassEx(&wc);
 
-    hWnd = CreateWindow(
+    // ウィンドウの作成
+    m_hWnd = CreateWindowEx(
+        0,
         wc.lpszClassName,
         L"Clicker Game",
         WS_OVERLAPPEDWINDOW,
@@ -22,40 +25,36 @@ Window::Window(HINSTANCE hInstance, int nCmdShow)
         nullptr,
         hInstance,
         nullptr
-    
     );
-    ShowWindow(hWnd, nCmdShow);
+
+    ShowWindow(m_hWnd, nCmdShow);
+    UpdateWindow(m_hWnd);
 }
 
-Window::~Window()
+bool Window::Update()
 {
-    UnregisterClass(wc.lpszClassName, wc.hInstance);
-}
-
-void Window::Update()
-{
-    MSG message;
-    if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+    MSG msg;
+    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
     {
-        if (message.message == WM_QUIT)
+        if (msg.message == WM_QUIT)
         {
-            isClosed = true;
+            return true;
         }
         else
         {
-            TranslateMessage(&message);
-            DispatchMessage(&message);
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
     }
+    return false;
 }
 
-LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (message == WM_DESTROY)
     {
         PostQuitMessage(0);
         return 0;
     }
-
     return DefWindowProc(hWnd, message, wParam, lParam);
 }

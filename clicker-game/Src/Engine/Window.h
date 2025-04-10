@@ -6,18 +6,22 @@
 class Window
 {
 public:
-    Window(HINSTANCE hInstance, int nCmdShow);
-    ~Window();
+    /// <summary>
+    /// ウィンドウ初期化
+    /// </summary>
+    void Init(HINSTANCE hInstance, int nCmdShow);
 
-    void Update();
-	bool GetIsClosed() { return isClosed; }
+    /// <summary>
+    /// ウィンドウ更新
+    /// </summary>
+    /// <returns>ウィンドウ閉じられたか</returns>
+    bool Update();
 
 private:
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    HWND hWnd;
-    WNDCLASS wc;
-    bool isClosed;
+private:
+    HWND m_hWnd;
 };
 
 #endif
