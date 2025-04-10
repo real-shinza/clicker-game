@@ -6,6 +6,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
     engine.Init(hInstance, nCmdShow);
     engine.Update();
+    engine.Release();
 
     return 0;
 }

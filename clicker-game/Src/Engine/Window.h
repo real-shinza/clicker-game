@@ -6,6 +6,9 @@
 class Window
 {
 public:
+    Window();
+    ~Window();
+
     /// <summary>
     /// ウィンドウ初期化
     /// </summary>
@@ -22,6 +25,9 @@ private:
 
 private:
     HWND m_hWnd;
+
+public:
+    HWND GetHWND() const { return m_hWnd; }
 };
 
 #endif

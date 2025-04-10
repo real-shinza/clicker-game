@@ -2,10 +2,14 @@
 #define ENGINE_H
 
 #include "Window.h"
+#include "Renderer.h"
 
 class Engine
 {
 public:
+    Engine();
+    ~Engine();
+
     /// <summary>
     /// エンジン初期化
     /// </summary>
@@ -16,8 +20,14 @@ public:
     /// </summary>
     void Update();
 
+    /// <summary>
+    /// エンジン解放
+    /// </summary>
+    void Release();
+
 private:
     Window m_Window;
+    Renderer m_Renderer;
 };
 
 #endif

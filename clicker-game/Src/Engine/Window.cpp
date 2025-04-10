@@ -1,5 +1,13 @@
 #include "Window.h"
 
+Window::Window()
+{
+}
+
+Window::~Window()
+{
+}
+
 void Window::Init(HINSTANCE hInstance, int nCmdShow)
 {
     // ウィンドウクラスの登録

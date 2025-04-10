@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine\Engine.cpp" />
+    <ClCompile Include="Src\Engine\Renderer.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine\Engine.h" />
+    <ClInclude Include="Src\Engine\Renderer.h" />
     <ClInclude Include="Src\Engine\Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
