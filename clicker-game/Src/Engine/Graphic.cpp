@@ -20,6 +20,9 @@ void Graphic::Init(HWND hWnd)
 
 void Graphic::Update()
 {
+    ResetCommand();
+    SetRenderTarget();
+    ExecuteCommand();
 }
 
 void Graphic::Release()
@@ -193,4 +196,56 @@ void Graphic::CreateFence()
 
     // イベントの生成
     m_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+}
+
+void Graphic::ResetCommand()
+{
+    m_pCommandAllocator->Reset();
+    m_pCommandList->Reset(m_pCommandAllocator, nullptr);
+}
+
+void Graphic::SetRenderTarget()
+{
+    // リソースバリアの設定
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+    // バリアをコマンドリストに記録する
+    m_pCommandList->ResourceBarrier(1, &barrier);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRenderTargetHeap->GetCPUDescriptorHandleForHeapStart();
+    handle.ptr += m_FrameIndex * m_RTVIncrementSize;
+
+    // レンダーターゲットをクリア
+    float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    m_pCommandList->ClearRenderTargetView(handle, color, 0, nullptr);
+}
+
+void Graphic::ExecuteCommand()
+{
+    // リソースバリアの設定
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    m_pCommandList->ResourceBarrier(1, &barrier);
+
+    // コマンドリストのクローズと実行
+    m_pCommandList->Close();
+    ID3D12CommandList* commandLists[] = { m_pCommandList };
+    m_pCommandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
+
+    // 画面交換
+    m_pSwapChain->Present(1, 0);
+
+    // インデックスを更新
+    m_FrameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
 }

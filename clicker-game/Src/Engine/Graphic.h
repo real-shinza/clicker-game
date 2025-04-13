@@ -59,6 +59,21 @@ private:
     /// </summary>
     void CreateFence();
 
+    /// <summary>
+    /// コマンドをリセット
+    /// </summary>
+    void ResetCommand();
+
+    /// <summary>
+    /// レンダーターゲット設定
+    /// </summary>
+    void SetRenderTarget();
+
+    /// <summary>
+    /// コマンド実行
+    /// </summary>
+    void ExecuteCommand();
+
 private:
     static const int BACK_BUFFER_NUM = 2;
 
