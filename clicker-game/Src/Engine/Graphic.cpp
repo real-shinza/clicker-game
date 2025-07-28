@@ -18,10 +18,11 @@ void Graphic::Init(HWND hWnd)
     CreateFence();
 }
 
-void Graphic::Update()
+void Graphic::Update(Game* game)
 {
     ResetCommand();
     SetRenderTarget();
+    game->Draw();
     ExecuteCommand();
 }
 

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Src\Engine\Engine.cpp" />
     <ClCompile Include="Src\Engine\Graphic.cpp" />
+    <ClCompile Include="Src\Engine\Texture.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
     <ClCompile Include="Src\Game\Enemy.cpp" />
     <ClCompile Include="Src\Game\Game.cpp" />
@@ -29,6 +30,7 @@
   <ItemGroup>
     <ClInclude Include="Src\Engine\Engine.h" />
     <ClInclude Include="Src\Engine\Graphic.h" />
+    <ClInclude Include="Src\Engine\Texture.h" />
     <ClInclude Include="Src\Engine\Window.h" />
     <ClInclude Include="Src\Game\Enemy.h" />
     <ClInclude Include="Src\Game\Game.h" />
