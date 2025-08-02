@@ -20,7 +20,7 @@ void Engine::Update(Game* game)
     {
         if (m_Window.Update()) return;
         game->Update();
-        m_Graphic.Update(game);
+        m_Graphic.Render(game);
     }
 }
 

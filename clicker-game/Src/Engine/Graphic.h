@@ -2,30 +2,29 @@
 #define GRAPHIC_H
 
 #include <d3d12.h>
+#include <d3dcompiler.h>
 #include <dxgi1_6.h>
 #include "../Game/Game.h"
 
 #pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxgi.lib")
 
 class Graphic
 {
 public:
-    Graphic();
-    ~Graphic();
-
     /// <summary>
-    /// レンダリング初期化
+    /// グラフィック初期化
     /// </summary>
-    void Init(HWND hWnd);
+    bool Init(HWND hWnd);
 
     /// <summary>
-    /// レンダリング更新
+    /// グラフィック更新
     /// </summary>
-    void Update(Game* game);
+    void Render(Game* game);
 
     /// <summary>
-    /// レンダリング解放
+    /// グラフィック解放
     /// </summary>
     void Release();
 
@@ -33,49 +32,46 @@ private:
     /// <summary>
     /// デバイス作成
     /// </summary>
-    void CreateDevice();
+    bool CreateDevice();
 
     /// <summary>
     /// コマンドキュー作成
     /// </summary>
-    void CreateCommandQueue();
+    bool CreateCommandQueue();
 
     /// <summary>
     /// スワップチェーン作成
     /// </summary>
-    void CreateSwapChain(HWND hWnd);
+    bool CreateSwapChain(HWND hWnd);
 
     /// <summary>
     /// レンダーターゲット作成
     /// </summary>
-    void CreateRenderTarget();
+    bool CreateRenderTarget();
 
     /// <summary>
     /// コマンドリスト作成
     /// </summary>
-    void CreateCommandList();
+    bool CreateCommandList();
 
     /// <summary>
     /// フェンス作成
     /// </summary>
-    void CreateFence();
+    bool CreateFence();
 
     /// <summary>
-    /// コマンドをリセット
+    /// 描画開始処理
     /// </summary>
-    void ResetCommand();
+    void BeginRendering();
 
     /// <summary>
-    /// レンダーターゲット設定
+    /// 描画終了処理
     /// </summary>
-    void SetRenderTarget();
-
-    /// <summary>
-    /// コマンド実行
-    /// </summary>
-    void ExecuteCommand();
+    void EndRendering();
 
 private:
+    static const int WINDOW_WIDTH = 800;
+    static const int WINDOW_HEIGHT = 600;
     static const int BACK_BUFFER_NUM = 2;
 
     ID3D12Device* m_pDevice;

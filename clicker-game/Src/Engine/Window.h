@@ -6,9 +6,6 @@
 class Window
 {
 public:
-    Window();
-    ~Window();
-
     /// <summary>
     /// ウィンドウ初期化
     /// </summary>
@@ -21,6 +18,9 @@ public:
     bool Update();
 
 private:
+    /// <summary>
+    /// ウィンドウプロシージャ
+    /// </summary>
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:

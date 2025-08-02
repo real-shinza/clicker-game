@@ -1,29 +1,21 @@
 #include "Graphic.h"
 
-Graphic::Graphic()
+bool Graphic::Init(HWND hWnd)
 {
+    if (!CreateDevice()) return false;
+    if (!CreateCommandQueue()) return false;
+    if (!CreateSwapChain(hWnd)) return false;
+    if (!CreateRenderTarget()) return false;
+    if (!CreateCommandList()) return false;
+    if (!CreateFence()) return false;
+    return true;
 }
 
-Graphic::~Graphic()
+void Graphic::Render(Game* game)
 {
-}
-
-void Graphic::Init(HWND hWnd)
-{
-    CreateDevice();
-    CreateCommandQueue();
-    CreateSwapChain(hWnd);
-    CreateRenderTarget();
-    CreateCommandList();
-    CreateFence();
-}
-
-void Graphic::Update(Game* game)
-{
-    ResetCommand();
-    SetRenderTarget();
+    BeginRendering();
     game->Draw();
-    ExecuteCommand();
+    EndRendering();
 }
 
 void Graphic::Release()
@@ -78,75 +70,104 @@ void Graphic::Release()
     }
 }
 
-void Graphic::CreateDevice()
+bool Graphic::CreateDevice()
 {
-    D3D12CreateDevice(
-        nullptr,
-        D3D_FEATURE_LEVEL_11_0,
-        IID_PPV_ARGS(&m_pDevice)
+    // デバイスを作成
+    HRESULT hr = D3D12CreateDevice(
+        nullptr,                    // ビデオアダプターへのポインター
+        D3D_FEATURE_LEVEL_11_0,     // 最低要求機能レベル
+        IID_PPV_ARGS(&m_pDevice)    // 出力デバイスポインター
     );
+
+    if (FAILED(hr))
+        return false;
+    return true;
 }
 
-void Graphic::CreateCommandQueue()
+bool Graphic::CreateCommandQueue()
 {
+    // コマンドキューの設定
     D3D12_COMMAND_QUEUE_DESC cqDesc = {};
-    cqDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-    cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    cqDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;           // タイプを指定
+    cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;  // コマンドキューの優先順位
+    cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;           // フラグを指定
 
-    // キューの作成
-    m_pDevice->CreateCommandQueue(
+    // コマンドキューを作成
+    HRESULT hr = m_pDevice->CreateCommandQueue(
         &cqDesc,
         IID_PPV_ARGS(&m_pCommandQueue)
     );
+
+    if (FAILED(hr))
+        return false;
+    return true;
 }
 
-void Graphic::CreateSwapChain(HWND hWnd)
+bool Graphic::CreateSwapChain(HWND hWnd)
 {
-    // 設定
-    CreateDXGIFactory1(IID_PPV_ARGS(&m_pFactory));
-    DXGI_SWAP_CHAIN_DESC1 desc = {};
-    desc.BufferCount = BACK_BUFFER_NUM;
-    desc.BufferUsage = DXGI_USAGE_BACK_BUFFER;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.Width = 800;
-    desc.Height = 600;
-    desc.Stereo = false;
-    desc.SampleDesc.Count = 1;
-    desc.SampleDesc.Quality = 0;
-    desc.Scaling = DXGI_SCALING_STRETCH;
-    desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    desc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-    desc.Flags = 0;
+    HRESULT hr;
 
-    // スワップチェーン作成
-    m_pFactory->CreateSwapChainForHwnd(
-        m_pCommandQueue,
-        hWnd,
-        &desc,
-        nullptr,
-        nullptr,
-        (IDXGISwapChain1**)&m_pSwapChain
+    // DXGIファクトリを作成
+    hr = CreateDXGIFactory1(IID_PPV_ARGS(&m_pFactory));
+
+    if (FAILED(hr))
+        return false;
+
+    // スワップチェーンの設定
+    DXGI_SWAP_CHAIN_DESC1 desc = {};
+    desc.Width = WINDOW_WIDTH;                          // 解像度の幅
+    desc.Height = WINDOW_HEIGHT;                        // 解像度の高さ
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;           // 表示形式
+    desc.Stereo = false;                                // ステレオ
+    desc.SampleDesc.Count = 1;                          // マルチサンプルの数
+    desc.SampleDesc.Quality = 0;                        // イメージの品質レベル
+    desc.BufferUsage = DXGI_USAGE_BACK_BUFFER;          // バックバッファーのサーフェス使用量
+    desc.BufferCount = BACK_BUFFER_NUM;                 // バックバッファーの数
+    desc.Scaling = DXGI_SCALING_STRETCH;                // スケーリング方法
+    desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    // プレゼンテーションモデル
+    desc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;       // バックバッファーの透過性の動作を識別
+    desc.Flags = 0;                                     // フラグ
+
+    // スワップチェーンを作成
+    hr = m_pFactory->CreateSwapChainForHwnd(
+        m_pCommandQueue,                    // コマンドキューへのポインター
+        hWnd,                               // HWNDハンドル
+        &desc,                              // スワップチェーンの設定
+        nullptr,                            // 全画面表示スワップチェーンへのポインター
+        nullptr,                            // 出力のインターフェイスへのポインター
+        (IDXGISwapChain1**)&m_pSwapChain    // スワップチェーンのインターフェイスへのポインター
     );
+
+    if (FAILED(hr))
+        return false;
 
     // 現在のバックバッファーインデックス
     m_FrameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
+
+    return true;
 }
 
-void Graphic::CreateRenderTarget()
+bool Graphic::CreateRenderTarget()
 {
+    // ディスクリプタヒープの設定
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-    heapDesc.NumDescriptors = BACK_BUFFER_NUM;
-    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;     // 記述子の型を指定
+    heapDesc.NumDescriptors = BACK_BUFFER_NUM;          // 記述子の数
+    heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;   // オプションを指定
 
-    // ディスクリプタヒープ作成
-    m_pDevice->CreateDescriptorHeap(
+    // ディスクリプタヒープを作成
+    HRESULT hr = m_pDevice->CreateDescriptorHeap(
         &heapDesc,
         IID_PPV_ARGS(&m_pRenderTargetHeap)
     );
+
+    if (FAILED(hr))
+        return false;
+
+    // ハンドルのインクリメントサイズを取得
     m_RTVIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
+    // ヒープの先頭ハンドルを取得
     D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRenderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 
     for (int i = 0; i < BACK_BUFFER_NUM; ++i)
@@ -154,7 +175,7 @@ void Graphic::CreateRenderTarget()
         // スワップチェーンのバッファーを取得
         m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&m_pRenderTargets[i]));
 
-        // レンダーターゲットビューの作成
+        // レンダーターゲットビューを作成
         m_pDevice->CreateRenderTargetView(
             m_pRenderTargets[i],
             nullptr,
@@ -164,89 +185,96 @@ void Graphic::CreateRenderTarget()
         // 次へずらす
         handle.ptr += m_RTVIncrementSize;
     }
+
+    return true;
 }
 
-void Graphic::CreateCommandList()
+bool Graphic::CreateCommandList()
 {
-    // コマンドアロケータ作成
-    m_pDevice->CreateCommandAllocator(
+    HRESULT hr;
+
+    // コマンドアロケータを作成
+    hr = m_pDevice->CreateCommandAllocator(
         D3D12_COMMAND_LIST_TYPE_DIRECT,
         IID_PPV_ARGS(&m_pCommandAllocator)
     );
 
-    // コマンドリストの作成
-    m_pDevice->CreateCommandList(
+    if (FAILED(hr))
+        return false;
+
+    // コマンドリストを作成
+    hr = m_pDevice->CreateCommandList(
         0,
         D3D12_COMMAND_LIST_TYPE_DIRECT,
         m_pCommandAllocator,
         nullptr,
         IID_PPV_ARGS(&m_pCommandList)
     );
+
+    if (FAILED(hr))
+        return false;
+
     m_pCommandList->Close();
+
+    return true;
 }
 
-void Graphic::CreateFence()
+bool Graphic::CreateFence()
 {
-    // フェンス作成
-    m_pDevice->CreateFence(
+    // フェンスを作成
+    HRESULT hr = m_pDevice->CreateFence(
         0,
         D3D12_FENCE_FLAG_NONE,
         IID_PPV_ARGS(&m_pFence)
     );
-    m_FenceValue = 1;
+
+    if (FAILED(hr))
+        return false;
 
     // イベントの生成
     m_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    m_FenceValue = 1;
+
+    return true;
 }
 
-void Graphic::ResetCommand()
+void Graphic::BeginRendering()
 {
+    // コマンドをリセット
     m_pCommandAllocator->Reset();
     m_pCommandList->Reset(m_pCommandAllocator, nullptr);
-}
 
-void Graphic::SetRenderTarget()
-{
     // リソースバリアの設定
     D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;                      // リソースバリアの種類を指定
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;                           // 分割リソースバリアを設定
+    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];              // 遷移で使用されるリソースへのポインター
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;   // 遷移のサブリソースのインデックス
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;              // サブリソース
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;         // サブリソース
 
     // バリアをコマンドリストに記録する
     m_pCommandList->ResourceBarrier(1, &barrier);
 
+    // バックバッファ用のハンドルを計算
     D3D12_CPU_DESCRIPTOR_HANDLE handle = m_pRenderTargetHeap->GetCPUDescriptorHandleForHeapStart();
     handle.ptr += m_FrameIndex * m_RTVIncrementSize;
 
     // レンダーターゲットをクリア
-    float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    const float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     m_pCommandList->ClearRenderTargetView(handle, color, 0, nullptr);
 }
 
-void Graphic::ExecuteCommand()
+void Graphic::EndRendering()
 {
-    // リソースバリアの設定
-    D3D12_RESOURCE_BARRIER barrier = {};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    m_pCommandList->ResourceBarrier(1, &barrier);
-
-    // コマンドリストのクローズと実行
+    // コマンドリストのを閉じて実行キューを贈る
     m_pCommandList->Close();
     ID3D12CommandList* commandLists[] = { m_pCommandList };
     m_pCommandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
 
-    // 画面交換
+    // スワップチェーンで画面を表示
     m_pSwapChain->Present(1, 0);
 
-    // インデックスを更新
+    // 次のバックバッファインデックスを取得
     m_FrameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
 }

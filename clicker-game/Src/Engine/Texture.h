@@ -3,9 +3,7 @@
 
 class Texture
 {
-public:
-    Texture();
-    ~Texture();
+
 };
 
 #endif
