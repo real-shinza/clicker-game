@@ -7,9 +7,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     Engine engine;
     Game game;
 
-    engine.Init(hInstance, nCmdShow);
+    if (!engine.Init(hInstance, nCmdShow))
+        return 0;
     engine.Update(&game);
-    engine.Release();
 
     return 0;
 }

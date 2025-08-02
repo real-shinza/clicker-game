@@ -6,12 +6,15 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+    Release();
 }
 
-void Engine::Init(HINSTANCE hInstance, int nCmdShow)
+bool Engine::Init(HINSTANCE hInstance, int nCmdShow)
 {
     m_Window.Init(hInstance, nCmdShow);
-    m_Graphic.Init(m_Window.GetHWND());
+    if (!m_Graphic.Init(m_Window.GetHWND()))
+        return false;
+    return true;
 }
 
 void Engine::Update(Game* game)

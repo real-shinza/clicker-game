@@ -60,6 +60,16 @@ private:
     bool CreateFence();
 
     /// <summary>
+    /// ルートシグネチャ作成
+    /// </summary>
+    bool CreateRootSignature();
+
+    /// <summary>
+    /// パイプラインステート作成
+    /// </summary>
+    bool CreatePipelineState();
+
+    /// <summary>
     /// 描画開始処理
     /// </summary>
     void BeginRendering();
@@ -68,6 +78,11 @@ private:
     /// 描画終了処理
     /// </summary>
     void EndRendering();
+
+    /// <summary>
+    /// デバッグレイヤー
+    /// </summary>
+    void EnableDebugLayer();
 
 private:
     static const int WINDOW_WIDTH = 800;
@@ -87,6 +102,10 @@ private:
     ID3D12Fence* m_pFence;
     HANDLE m_FenceEvent;
     UINT64 m_FenceValue;
+    ID3D12RootSignature* m_pRootSignature;
+    ID3D12PipelineState* m_pPipelineState;
+    D3D12_VIEWPORT m_Viewport;
+    D3D12_RECT m_ScissorRect;
 };
 
 #endif

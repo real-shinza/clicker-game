@@ -14,7 +14,7 @@ public:
     /// <summary>
     /// エンジン初期化
     /// </summary>
-    void Init(HINSTANCE hInstance, int nCmdShow);
+    bool Init(HINSTANCE hInstance, int nCmdShow);
 
     /// <summary>
     /// エンジン更新
