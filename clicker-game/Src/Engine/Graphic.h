@@ -80,6 +80,11 @@ private:
     void EndRendering();
 
     /// <summary>
+    /// GPU完了を待つ
+    /// </summary>
+    void FlushGPU();
+
+    /// <summary>
     /// デバッグレイヤー
     /// </summary>
     void EnableDebugLayer();

@@ -23,6 +23,8 @@ void Graphic::Render(Game* game)
 
 void Graphic::Release()
 {
+    FlushGPU();
+
     if (m_pDevice)
     {
         m_pDevice->Release();
@@ -70,6 +72,16 @@ void Graphic::Release()
     {
         m_pFence->Release();
         m_pFence = nullptr;
+    }
+    if (m_pRootSignature)
+    {
+        m_pRootSignature->Release();
+        m_pRootSignature = nullptr;
+    }
+    if (m_pPipelineState)
+    {
+        m_pPipelineState->Release();
+        m_pPipelineState = nullptr;
     }
 }
 
@@ -215,8 +227,6 @@ bool Graphic::CreateCommandList()
         m_pPipelineState,
         IID_PPV_ARGS(&m_pCommandList)
     );
-
-    m_pCommandList->Reset(m_pCommandAllocator, m_pPipelineState);
 
     if (FAILED(hr))
         return false;
@@ -415,12 +425,7 @@ bool Graphic::CreatePipelineState()
     );
 
     if (FAILED(hr))
-    {
-        char buf[256];
-        sprintf_s(buf, "[ERROR] CreateGraphicsPipelineState failed: 0x%08X\n", hr);
-        OutputDebugStringA(buf);
         return false;
-    }
 
     // シェーダーを解放
     if (pVertexShader)
@@ -448,7 +453,7 @@ void Graphic::BeginRendering()
 
     // コマンドをリセット
     m_pCommandAllocator->Reset();
-    m_pCommandList->Reset(m_pCommandAllocator, nullptr);
+    m_pCommandList->Reset(m_pCommandAllocator, m_pPipelineState);
     m_pCommandList->SetGraphicsRootSignature(m_pRootSignature);
     m_pCommandList->RSSetViewports(1, &m_Viewport);
     m_pCommandList->RSSetScissorRects(1, &m_ScissorRect);
@@ -476,6 +481,18 @@ void Graphic::BeginRendering()
 
 void Graphic::EndRendering()
 {
+    // リソースバリアの設定
+    D3D12_RESOURCE_BARRIER barrier = {};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = m_pRenderTargets[m_FrameIndex];
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+
+    // バリアをコマンドリストに記録する
+    m_pCommandList->ResourceBarrier(1, &barrier);
+
     // コマンドリストのを閉じて実行キューを贈る
     m_pCommandList->Close();
     ID3D12CommandList* commandLists[] = { m_pCommandList };
@@ -484,8 +501,21 @@ void Graphic::EndRendering()
     // スワップチェーンで画面を表示
     m_pSwapChain->Present(1, 0);
 
+    // GPU完了待ち
+    FlushGPU();
+
     // 次のバックバッファインデックスを取得
     m_FrameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
+}
+
+void Graphic::FlushGPU()
+{
+    const UINT64 fence = m_FenceValue++;
+    m_pCommandQueue->Signal(m_pFence, fence);
+    if (m_pFence->GetCompletedValue() < fence) {
+        m_pFence->SetEventOnCompletion(fence, m_FenceEvent);
+        WaitForSingleObject(m_FenceEvent, INFINITE);
+    }
 }
 
 void Graphic::EnableDebugLayer()
