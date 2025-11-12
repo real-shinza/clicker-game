@@ -1,7 +1,6 @@
 #include "Engine/Engine.h"
 #include "Game/Game.h"
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     Engine engine;
@@ -9,6 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     if (!engine.Init(hInstance, nCmdShow))
         return 0;
+    game.Init();
     engine.Update(&game);
 
     return 0;

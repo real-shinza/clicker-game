@@ -1,8 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <list>
-#include "Enemy.h"
+#include "Scene/SceneManager.h"
 
 class Game
 {
@@ -15,7 +14,7 @@ public:
     void Draw();
 
 private:
-    std::list<Enemy*> enemies;
+    SceneManager m_SceneManager;
 };
 
 #endif

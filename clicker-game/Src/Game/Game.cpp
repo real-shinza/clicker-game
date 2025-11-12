@@ -6,30 +6,19 @@ Game::Game()
 
 Game::~Game()
 {
-    for (Enemy* enemy : enemies)
-    {
-        delete enemy;
-    }
-    enemies.clear();
 }
 
 void Game::Init()
 {
-    enemies.push_back(new Enemy());
+    m_SceneManager.Init();
 }
 
 void Game::Update()
 {
-    for (Enemy* enemy : enemies)
-    {
-        enemy->Update();
-    }
+    m_SceneManager.Update();
 }
 
 void Game::Draw()
 {
-    for (Enemy* enemy : enemies)
-    {
-        enemy->Draw();
-    }
+    m_SceneManager.Draw();
 }
