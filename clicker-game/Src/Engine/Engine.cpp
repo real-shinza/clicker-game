@@ -12,7 +12,7 @@ Engine::~Engine()
 bool Engine::Init(HINSTANCE hInstance, int nCmdShow)
 {
     m_Window.Init(hInstance, nCmdShow);
-    if (!m_Graphic.Init(m_Window.GetHWND()))
+    if (!m_Graphic.Init())
         return false;
     return true;
 }
@@ -23,7 +23,8 @@ void Engine::Update(Game* game)
     {
         if (m_Window.Update()) return;
         game->Update();
-        m_Graphic.Render(game);
+        m_Graphic.BeginRendering();
+        m_Graphic.EndRendering();
     }
 }
 

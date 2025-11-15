@@ -1,14 +1,10 @@
 #ifndef GRAPHIC_H
 #define GRAPHIC_H
 
-#include <d3d12.h>
-#include <d3dcompiler.h>
-#include <dxgi1_6.h>
-#include "../Game/Game.h"
+#include "Window.h"
+#include <d3d11.h>
 
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d11.lib")
 
 class Graphic
 {
@@ -16,58 +12,7 @@ public:
     /// <summary>
     /// グラフィック初期化
     /// </summary>
-    bool Init(HWND hWnd);
-
-    /// <summary>
-    /// グラフィック更新
-    /// </summary>
-    void Render(Game* game);
-
-    /// <summary>
-    /// グラフィック解放
-    /// </summary>
-    void Release();
-
-private:
-    /// <summary>
-    /// デバイス作成
-    /// </summary>
-    bool CreateDevice();
-
-    /// <summary>
-    /// コマンドキュー作成
-    /// </summary>
-    bool CreateCommandQueue();
-
-    /// <summary>
-    /// スワップチェーン作成
-    /// </summary>
-    bool CreateSwapChain(HWND hWnd);
-
-    /// <summary>
-    /// レンダーターゲット作成
-    /// </summary>
-    bool CreateRenderTarget();
-
-    /// <summary>
-    /// コマンドリスト作成
-    /// </summary>
-    bool CreateCommandList();
-
-    /// <summary>
-    /// フェンス作成
-    /// </summary>
-    bool CreateFence();
-
-    /// <summary>
-    /// ルートシグネチャ作成
-    /// </summary>
-    bool CreateRootSignature();
-
-    /// <summary>
-    /// パイプラインステート作成
-    /// </summary>
-    bool CreatePipelineState();
+    bool Init();
 
     /// <summary>
     /// 描画開始処理
@@ -80,37 +25,26 @@ private:
     void EndRendering();
 
     /// <summary>
-    /// GPU完了を待つ
+    /// グラフィック解放
     /// </summary>
-    void FlushGPU();
-
-    /// <summary>
-    /// デバッグレイヤー
-    /// </summary>
-    void EnableDebugLayer();
+    void Release();
 
 private:
-    static const int WINDOW_WIDTH = 800;
-    static const int WINDOW_HEIGHT = 600;
-    static const int BACK_BUFFER_NUM = 2;
+    /// <summary>
+    /// デバイスとスワップチェーンを作成
+    /// </summary>
+    bool CreateDeviceAndSwapChain();
 
-    ID3D12Device* m_pDevice;
-    ID3D12CommandQueue* m_pCommandQueue;
-    IDXGISwapChain3* m_pSwapChain;
-    IDXGIFactory7* m_pFactory;
-    UINT m_FrameIndex;
-    ID3D12DescriptorHeap* m_pRenderTargetHeap;
-    UINT m_RTVIncrementSize;
-    ID3D12Resource* m_pRenderTargets[BACK_BUFFER_NUM];
-    ID3D12CommandAllocator* m_pCommandAllocator;
-    ID3D12GraphicsCommandList* m_pCommandList;
-    ID3D12Fence* m_pFence;
-    HANDLE m_FenceEvent;
-    UINT64 m_FenceValue;
-    ID3D12RootSignature* m_pRootSignature;
-    ID3D12PipelineState* m_pPipelineState;
-    D3D12_VIEWPORT m_Viewport;
-    D3D12_RECT m_ScissorRect;
+    /// <summary>
+    /// レンダーターゲットビューを作成
+    /// </summary>
+    bool CreateRenderTargetView();
+
+private:
+    ID3D11Device* m_pDevice;
+    ID3D11DeviceContext* m_pContext;
+    IDXGISwapChain* m_pSwapChain;
+    ID3D11RenderTargetView* m_pRenderTargetView;
 };
 
 #endif

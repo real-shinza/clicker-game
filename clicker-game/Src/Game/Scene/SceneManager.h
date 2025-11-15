@@ -4,6 +4,13 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 
+enum class SceneType
+{
+    Title,
+    Game,
+    Result,
+};
+
 class SceneManager
 {
 public:
@@ -19,13 +26,6 @@ private:
     TitleScene m_TitleScene;
     GameScene m_GameScene;
     SceneType m_CurrentType;
-};
-
-enum class SceneType
-{
-    Title,
-    Game,
-    Result,
 };
 
 #endif

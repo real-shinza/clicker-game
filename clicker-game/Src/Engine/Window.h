@@ -23,11 +23,9 @@ private:
     /// </summary>
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-private:
-    HWND m_hWnd;
-
 public:
-    HWND GetHWND() const { return m_hWnd; }
+    static const int WINDOW_WIDTH = 800;
+    static const int WINDOW_HEIGHT = 600;
 };
 
 #endif

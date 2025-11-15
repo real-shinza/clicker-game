@@ -10,6 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 0;
     game.Init();
     engine.Update(&game);
+    engine.Release();
 
     return 0;
 }

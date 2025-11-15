@@ -4,32 +4,31 @@ void Window::Init(HINSTANCE hInstance, int nCmdShow)
 {
     // ウィンドウクラスの登録
     WNDCLASSEX wc = {};
-    wc.cbSize = sizeof(WNDCLASSEX);     // 構造体のサイズ
-    wc.style = CS_HREDRAW | CS_VREDRAW; // クラスのスタイル
-    wc.lpfnWndProc = WndProc;           // ウィンドウプロシージャへのポインター
-    wc.hInstance = hInstance;           // インスタンスへのハンドル
-    wc.lpszClassName = L"Clicker Game"; // クラス名
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"Clicker Game";
     RegisterClassEx(&wc);
 
     // ウィンドウを作成
-    m_hWnd = CreateWindowEx(
-        0,                      // 拡張ウィンドウスタイル
-        wc.lpszClassName,       // ウィンドウクラス
-        L"Clicker Game",        // ウィンドウ名
-        WS_OVERLAPPEDWINDOW,    // ウィンドウスタイル
-        CW_USEDEFAULT,          // X座標
-        CW_USEDEFAULT,          // Y座標
-        800,                    // 幅
-        600,                    // 高さ
-        nullptr,                // 親ウィンドウ
-        nullptr,                // メニュー
-        hInstance,              // インスタンスハンドル
-        nullptr                 // 追加パラメーター
+    HWND hWnd = CreateWindow(
+        wc.lpszClassName,
+        L"Clicker Game",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        Window::WINDOW_WIDTH,
+        Window::WINDOW_HEIGHT,
+        nullptr,
+        nullptr,
+        hInstance,
+        nullptr
     );
 
     // ウィンドウを表示
-    ShowWindow(m_hWnd, nCmdShow);
-    UpdateWindow(m_hWnd);
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
 }
 
 bool Window::Update()
@@ -45,21 +44,21 @@ bool Window::Update()
         }
         else
         {
-            TranslateMessage(&msg); // キー入力メッセージの前処理
-            DispatchMessage(&msg);  // ウィンドウプロシージャに渡す
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
     }
     return false;
 }
 
-LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Window::WndProc(HWND hWnd, UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (message == WM_DESTROY)
+    if (nMsg == WM_DESTROY)
     {
         // メッセージループに終了を伝達
         PostQuitMessage(0);
         return 0;
     }
     // デフォルトのウィンドウ処理
-    return DefWindowProc(hWnd, message, wParam, lParam);
+    return DefWindowProc(hWnd, nMsg, wParam, lParam);
 }

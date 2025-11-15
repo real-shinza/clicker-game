@@ -24,8 +24,12 @@
     <ClCompile Include="Src\Engine\Sprite.cpp" />
     <ClCompile Include="Src\Engine\Texture.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
-    <ClCompile Include="Src\Game\Enemy.cpp" />
+    <ClCompile Include="Src\Game\Enemy\EnemiesManager.cpp" />
+    <ClCompile Include="Src\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Game\Game.cpp" />
+    <ClCompile Include="Src\Game\Scene\GameScene.cpp" />
+    <ClCompile Include="Src\Game\Scene\SceneManager.cpp" />
+    <ClCompile Include="Src\Game\Scene\TitleScene.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -34,8 +38,12 @@
     <ClInclude Include="Src\Engine\Sprite.h" />
     <ClInclude Include="Src\Engine\Texture.h" />
     <ClInclude Include="Src\Engine\Window.h" />
-    <ClInclude Include="Src\Game\Enemy.h" />
+    <ClInclude Include="Src\Game\Enemy\EnemiesManager.h" />
+    <ClInclude Include="Src\Game\Enemy\Enemy.h" />
     <ClInclude Include="Src\Game\Game.h" />
+    <ClInclude Include="Src\Game\Scene\GameScene.h" />
+    <ClInclude Include="Src\Game\Scene\SceneManager.h" />
+    <ClInclude Include="Src\Game\Scene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\PixelShader.hlsl">
@@ -139,6 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
