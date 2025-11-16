@@ -24,6 +24,7 @@ void Engine::Update(Game* game)
         if (m_Window.Update()) return;
         game->Update();
         m_Graphic.BeginRendering();
+        game->Draw();
         m_Graphic.EndRendering();
     }
 }

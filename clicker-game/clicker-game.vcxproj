@@ -21,13 +21,13 @@
   <ItemGroup>
     <ClCompile Include="Src\Engine\Engine.cpp" />
     <ClCompile Include="Src\Engine\Graphic.cpp" />
-    <ClCompile Include="Src\Engine\Sprite.cpp" />
     <ClCompile Include="Src\Engine\Texture.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
     <ClCompile Include="Src\Game\Enemy\EnemiesManager.cpp" />
     <ClCompile Include="Src\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Src\Game\Game.cpp" />
     <ClCompile Include="Src\Game\Scene\GameScene.cpp" />
+    <ClCompile Include="Src\Game\Scene\ResultScene.cpp" />
     <ClCompile Include="Src\Game\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Game\Scene\TitleScene.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -35,13 +35,13 @@
   <ItemGroup>
     <ClInclude Include="Src\Engine\Engine.h" />
     <ClInclude Include="Src\Engine\Graphic.h" />
-    <ClInclude Include="Src\Engine\Sprite.h" />
     <ClInclude Include="Src\Engine\Texture.h" />
     <ClInclude Include="Src\Engine\Window.h" />
     <ClInclude Include="Src\Game\Enemy\EnemiesManager.h" />
     <ClInclude Include="Src\Game\Enemy\Enemy.h" />
     <ClInclude Include="Src\Game\Game.h" />
     <ClInclude Include="Src\Game\Scene\GameScene.h" />
+    <ClInclude Include="Src\Game\Scene\ResultScene.h" />
     <ClInclude Include="Src\Game\Scene\SceneManager.h" />
     <ClInclude Include="Src\Game\Scene\TitleScene.h" />
   </ItemGroup>
@@ -51,14 +51,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <FileType>Document</FileType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
     </FxCompile>
     <FxCompile Include="Assets\Shader\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <FileType>Document</FileType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
     </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -113,6 +117,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

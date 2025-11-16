@@ -14,9 +14,6 @@ enum class SceneType
 class SceneManager
 {
 public:
-    SceneManager();
-    ~SceneManager();
-
     void Init();
     void Update();
     void Draw();

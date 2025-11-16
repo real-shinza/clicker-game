@@ -4,9 +4,6 @@
 class GameScene
 {
 public:
-    GameScene();
-    ~GameScene();
-
     void Init();
     void Update();
     void Draw();

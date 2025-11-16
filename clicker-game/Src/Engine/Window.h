@@ -24,6 +24,7 @@ private:
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 public:
+    inline static const wchar_t* CLASS_NAME = L"Clicker Game";
     static const int WINDOW_WIDTH = 800;
     static const int WINDOW_HEIGHT = 600;
 };

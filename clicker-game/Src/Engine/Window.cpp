@@ -8,13 +8,13 @@ void Window::Init(HINSTANCE hInstance, int nCmdShow)
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
-    wc.lpszClassName = L"Clicker Game";
+    wc.lpszClassName = Window::CLASS_NAME;
     RegisterClassEx(&wc);
 
     // ウィンドウを作成
     HWND hWnd = CreateWindow(
         wc.lpszClassName,
-        L"Clicker Game",
+        Window::CLASS_NAME,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
