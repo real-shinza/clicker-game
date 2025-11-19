@@ -64,9 +64,9 @@ private:
     bool CreateSamplerState();
 
     /// <summary>
-    /// マトリックスを初期化
+    /// ブレンドステートを作成
     /// </summary>
-    void InitMatrix();
+    bool CreateBlendState();
 
 public:
     /// <summary>
