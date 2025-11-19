@@ -5,6 +5,9 @@
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <directxmath.h>
+#include <string>
+#include <map>
+#include <unordered_map>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")
@@ -41,14 +44,29 @@ private:
     bool CreateShader();
 
     /// <summary>
-    /// バッファを作成
+    /// 頂点バッファを作成
     /// </summary>
-    bool CreateBuffer();
+    bool CreateVertexBuffer();
+
+    /// <summary>
+    /// インデックスバッファを作成
+    /// </summary>
+    bool CreateIndexBuffer();
+
+    /// <summary>
+    /// 定数バッファを作成
+    /// </summary>
+    bool CreateConstantBuffer();
 
     /// <summary>
     /// サンプラーステートを作成
     /// </summary>
     bool CreateSamplerState();
+
+    /// <summary>
+    /// マトリックスを初期化
+    /// </summary>
+    void InitMatrix();
 
 public:
     /// <summary>
@@ -61,6 +79,34 @@ public:
     /// </summary>
     void EndRendering();
 
+    /// <summary>
+    /// 画像読み込み
+    /// </summary>
+    /// <param name="name">名前</param>
+    /// <param name="filePath">ファイルパス</param>
+    void LoadTexture(std::string name, std::wstring filePath);
+
+    /// <summary>
+    /// 画像描画
+    /// </summary>
+    /// <param name="name">名前</param>
+    /// <param name="x">X座標</param>
+    /// <param name="y">Y座標</param>
+    void DrawTexture(std::string name, float x, float y);
+
+private:
+    struct Vertex
+    {
+        XMFLOAT4 pos;
+        XMFLOAT4 color;
+        XMFLOAT2 uv;
+    };
+
+    struct MatrixBuffer
+    {
+        XMMATRIX ortho;
+    };
+
 private:
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pContext;
@@ -70,9 +116,11 @@ private:
     ID3D11PixelShader* m_pPixelShader;
     ID3D11InputLayout* m_pInputLayout;
     ID3D11Buffer* m_pVertexBuffer;
+    ID3D11Buffer* m_pIndexBuffer;
     ID3D11Buffer* m_pConstantBuffer;
     ID3D11SamplerState* m_pSamplerState;
-    ID3D11ShaderResourceView* m_pShaderResourceView;
+    std::map<std::string, ID3D11ShaderResourceView*> m_pShaderResourceViews;
+    std::unordered_map<std::string, std::wstring> m_textureNames;
 };
 
 #endif

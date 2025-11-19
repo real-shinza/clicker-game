@@ -9,7 +9,7 @@ public:
     /// <summary>
     /// ウィンドウ初期化
     /// </summary>
-    void Init(HINSTANCE hInstance, int nCmdShow);
+    bool Init(HINSTANCE hInstance, int nCmdShow);
 
     /// <summary>
     /// ウィンドウ更新

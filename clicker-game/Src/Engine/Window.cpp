@@ -1,6 +1,6 @@
 #include "Window.h"
 
-void Window::Init(HINSTANCE hInstance, int nCmdShow)
+bool Window::Init(HINSTANCE hInstance, int nCmdShow)
 {
     // ウィンドウクラスの登録
     WNDCLASSEX wc = {};
@@ -26,14 +26,20 @@ void Window::Init(HINSTANCE hInstance, int nCmdShow)
         nullptr
     );
 
+    if (!hWnd)
+        return false;
+
     // ウィンドウを表示
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
+
+    return true;
 }
 
 bool Window::Update()
 {
     MSG msg;
+
     // メッセージがあれば取得
     if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
     {
@@ -48,6 +54,7 @@ bool Window::Update()
             DispatchMessage(&msg);
         }
     }
+
     return false;
 }
 
@@ -59,6 +66,7 @@ LRESULT Window::WndProc(HWND hWnd, UINT nMsg, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         return 0;
     }
+
     // デフォルトのウィンドウ処理
     return DefWindowProc(hWnd, nMsg, wParam, lParam);
 }

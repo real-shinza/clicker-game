@@ -19,9 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Engine\Engine.cpp" />
     <ClCompile Include="Src\Engine\Graphic.cpp" />
-    <ClCompile Include="Src\Engine\Texture.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
     <ClCompile Include="Src\Game\Enemy\EnemiesManager.cpp" />
     <ClCompile Include="Src\Game\Enemy\Enemy.cpp" />
@@ -33,9 +31,7 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Engine\Engine.h" />
     <ClInclude Include="Src\Engine\Graphic.h" />
-    <ClInclude Include="Src\Engine\Texture.h" />
     <ClInclude Include="Src\Engine\Window.h" />
     <ClInclude Include="Src\Game\Enemy\EnemiesManager.h" />
     <ClInclude Include="Src\Game\Enemy\Enemy.h" />

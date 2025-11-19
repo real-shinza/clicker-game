@@ -1,3 +1,8 @@
+cbuffer MatrixBuffer : register(b0)
+{
+    matrix ortho;
+};
+
 struct VSInput
 {
     float4 pos : POSITION;
@@ -15,7 +20,7 @@ struct VSOutput
 VSOutput VSMain(VSInput input)
 {
     VSOutput output;
-    output.pos = input.pos;
+    output.pos = mul(input.pos, ortho);
     output.color = input.color;
     output.uv = input.uv;
     return output;
