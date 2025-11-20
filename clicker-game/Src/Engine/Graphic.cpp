@@ -10,6 +10,8 @@ bool Graphic::Init()
     if (!CreateConstantBuffer()) return false;
     if (!CreateSamplerState()) return false;
     if (!CreateBlendState()) return false;
+    if (!CreateTextFormat()) return false;
+    InitMatrix();
     return true;
 }
 
@@ -89,6 +91,36 @@ void Graphic::Release()
         }
     }
     m_pShaderResourceViews.clear();
+
+    if (m_pD2DFactory)
+    {
+        m_pD2DFactory->Release();
+        m_pD2DFactory = nullptr;
+    }
+
+    if (m_pDWriteFactory)
+    {
+        m_pDWriteFactory->Release();
+        m_pDWriteFactory = nullptr;
+    }
+
+    if (m_pTextFormat)
+    {
+        m_pTextFormat->Release();
+        m_pTextFormat = nullptr;
+    }
+
+    if (m_pD2DRenderTarget)
+    {
+        m_pD2DRenderTarget->Release();
+        m_pD2DRenderTarget = nullptr;
+    }
+
+    if (m_pBrush)
+    {
+        m_pBrush->Release();
+        m_pBrush = nullptr;
+    }
 }
 
 bool Graphic::CreateDeviceAndSwapChain()
@@ -103,7 +135,7 @@ bool Graphic::CreateDeviceAndSwapChain()
     swapChainDesc.BufferDesc.Height = Window::WINDOW_HEIGHT;
     swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
     swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -116,7 +148,7 @@ bool Graphic::CreateDeviceAndSwapChain()
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
-        0,
+        D3D11_CREATE_DEVICE_BGRA_SUPPORT,
         nullptr,
         0,
         D3D11_SDK_VERSION,
@@ -127,8 +159,7 @@ bool Graphic::CreateDeviceAndSwapChain()
         &m_pContext
     );
 
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     return true;
 }
@@ -150,12 +181,10 @@ bool Graphic::CreateRenderTargetView()
     ID3D11Texture2D* backBuffer;
     HRESULT hr;
     hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
     hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView);
     backBuffer->Release();
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // レンダーターゲットをバックバッファに設定
     m_pContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
@@ -184,8 +213,7 @@ bool Graphic::CreateShader()
         nullptr,
         nullptr
     );
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // ピクセルシェーダーをコンパイル
     hr = D3DX11CompileFromFile(
@@ -201,16 +229,13 @@ bool Graphic::CreateShader()
         nullptr,
         nullptr
     );
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // カプセル化
     hr = m_pDevice->CreateVertexShader(pVertexShader->GetBufferPointer(), pVertexShader->GetBufferSize(), nullptr, &m_pVertexShader);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
     hr = m_pDevice->CreatePixelShader(pPixelShader->GetBufferPointer(), pPixelShader->GetBufferSize(), nullptr, &m_pPixelShader);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // シェーダーを設定
     m_pContext->VSSetShader(m_pVertexShader, nullptr, 0);
@@ -232,8 +257,7 @@ bool Graphic::CreateShader()
         pVertexShader->GetBufferSize(),
         &m_pInputLayout
     );
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // 入力レイアウトを設定
     m_pContext->IASetInputLayout(m_pInputLayout);
@@ -253,8 +277,7 @@ bool Graphic::CreateVertexBuffer()
 
     // 頂点バッファを作成
     HRESULT hr = m_pDevice->CreateBuffer(&vbDesc, nullptr, &m_pVertexBuffer);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     return true;
 }
@@ -283,8 +306,7 @@ bool Graphic::CreateIndexBuffer()
 
     // インデックスバッファを作成
     HRESULT hr = m_pDevice->CreateBuffer(&ibDesc, &initData, &m_pIndexBuffer);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     return true;
 }
@@ -301,8 +323,7 @@ bool Graphic::CreateConstantBuffer()
 
     // 定数バッファを作成
     HRESULT hr = m_pDevice->CreateBuffer(&cbDesc, nullptr, &m_pConstantBuffer);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // GPUバッファを設定
     m_pContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
@@ -322,8 +343,7 @@ bool Graphic::CreateSamplerState()
 
     // サンプラーステートを作成
     HRESULT hr = m_pDevice->CreateSamplerState(&samplerDesc, &m_pSamplerState);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     return true;
 }
@@ -345,8 +365,7 @@ bool Graphic::CreateBlendState()
     // ブレンドステートを作成
     ID3D11BlendState* pBlendState = nullptr;
     HRESULT hr = m_pDevice->CreateBlendState(&blendDesc, &pBlendState);
-    if (FAILED(hr))
-        return false;
+    if (FAILED(hr)) return false;
 
     // コンテキストに適用
     float blendFactor[4] = { 0, 0, 0, 0 };
@@ -356,6 +375,74 @@ bool Graphic::CreateBlendState()
     pBlendState->Release();
 
     return true;
+}
+
+bool Graphic::CreateTextFormat()
+{
+    HRESULT hr;
+
+    // Direct2Dファクトリ作成
+    hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pD2DFactory);
+    if (FAILED(hr)) return false;
+
+    // DirectWriteファクトリ作成
+    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&m_pDWriteFactory);
+    if (FAILED(hr)) return false;
+
+    // テキストフォーマット作成
+    hr = m_pDWriteFactory->CreateTextFormat(
+        L"メイリオ",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        32.0f,
+        L"ja-jp",
+        &m_pTextFormat
+    );
+
+    // レンダーターゲット作成の準備
+    ID3D11Texture2D* backBuffer;
+    hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
+    if (FAILED(hr)) return false;
+
+    IDXGISurface* dxgiSurface = nullptr;
+    hr = backBuffer->QueryInterface(__uuidof(IDXGISurface), (void**)&dxgiSurface);
+    backBuffer->Release();
+    if (FAILED(hr)) return false;
+
+    // レンダーターゲットを作成
+    D2D1_RENDER_TARGET_PROPERTIES props =
+        D2D1::RenderTargetProperties(
+            D2D1_RENDER_TARGET_TYPE_HARDWARE,
+            D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
+        );
+    hr = m_pD2DFactory->CreateDxgiSurfaceRenderTarget(dxgiSurface, &props, &m_pD2DRenderTarget);
+    dxgiSurface->Release();
+    if (FAILED(hr)) return false;
+
+    // ブラシ作成
+    hr = m_pD2DRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_pBrush);
+    if (FAILED(hr)) return false;
+
+    return true;
+}
+
+void Graphic::InitMatrix()
+{
+    // GPUへ転送
+    float halfW = Window::WINDOW_WIDTH * 0.5f;
+    float halfH = Window::WINDOW_HEIGHT * 0.5f;
+    XMMATRIX ortho = XMMatrixOrthographicOffCenterLH(
+        -halfW,
+        halfW,
+        halfH,
+        -halfH,
+        0.0f,
+        1.0f
+    );
+    ortho = XMMatrixTranspose(ortho);
+    m_pContext->UpdateSubresource(m_pConstantBuffer, 0, nullptr, &ortho, 0, 0);
 }
 
 void Graphic::BeginRendering()
@@ -384,8 +471,7 @@ void Graphic::LoadTexture(std::string name, std::wstring filePath)
         nullptr
     );
 
-    if (FAILED(hr))
-        return;
+    if (FAILED(hr)) return;
 
     m_pShaderResourceViews[name] = pSRV;
     m_textureNames[name] = filePath;
@@ -409,17 +495,19 @@ void Graphic::DrawTexture(std::string name, float x, float y)
 
     D3D11_TEXTURE2D_DESC texDesc;
     pTex2D->GetDesc(&texDesc);
-    float w = static_cast<float>(texDesc.Width);
-    float h = static_cast<float>(texDesc.Height);
+    float w = static_cast<float>(texDesc.Width) * 0.5f;
+    float h = static_cast<float>(texDesc.Height) * 0.5f;
 
     pTex2D->Release();
     pResource->Release();
 
-    Vertex vertices[4];
-    vertices[0] = { {x, y, 0.0f, 1.0f}, {1, 1, 1, 1}, {0, 0} };
-    vertices[1] = { {x + w, y, 0.0f, 1.0f}, {1, 1, 1, 1}, {1, 0} };
-    vertices[2] = { {x, y + h, 0.0f, 1.0f}, {1, 1, 1, 1}, {0, 1} };
-    vertices[3] = { {x + w, y + h, 0.0f, 1.0f}, {1, 1, 1, 1}, {1, 1} };
+    Vertex vertices[4] =
+    {
+        { { x - w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,0 } },
+        { { x + w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,0 } },
+        { { x - w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,1 } },
+        { { x + w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,1 } }
+    };
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     hr = m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
@@ -440,19 +528,28 @@ void Graphic::DrawTexture(std::string name, float x, float y)
     m_pContext->PSSetShaderResources(0, 1, &m_pShaderResourceViews[name]);
     m_pContext->PSSetSamplers(0, 1, &m_pSamplerState);
 
-    // GPUへ転送
-    MatrixBuffer matrixBuffer;
-    XMMATRIX ortho = XMMatrixOrthographicOffCenterLH(
-        0.0f,
-        Window::WINDOW_WIDTH,
-        Window::WINDOW_HEIGHT,
-        0.0f,
-        0.0f,
-        1.0f
-    );
-    matrixBuffer.ortho = XMMatrixTranspose(ortho);
-    m_pContext->UpdateSubresource(m_pConstantBuffer, 0, nullptr, &matrixBuffer, 0, 0);
-
     // インデックスバッファをバックバッファに描画
     m_pContext->DrawIndexed(6, 0, 0);
+}
+
+void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF color)
+{
+    if (!m_pD2DRenderTarget) return;
+
+    m_pBrush->SetColor(color);
+
+    // 描画開始
+    m_pD2DRenderTarget->BeginDraw();
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(x, y, x + 1000, y + 200);
+    m_pD2DRenderTarget->DrawTextW(
+        text.c_str(),
+        text.size(),
+        m_pTextFormat,
+        &layoutRect,
+        m_pBrush
+    );
+
+    // 描画終了
+    m_pD2DRenderTarget->EndDraw();
 }

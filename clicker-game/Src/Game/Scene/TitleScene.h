@@ -1,12 +1,15 @@
 #ifndef TITLE_SCENE_H
 #define TITLE_SCENE_H
 
-class TitleScene
+#include "SceneBase.h"
+
+class TitleScene : public SceneBase
 {
 public:
-    void Init();
-    void Update();
-    void Draw();
+    TitleScene(Graphic& graphic) : SceneBase(graphic) {};
+
+    void Update() override;
+    void Draw() override;
 };
 
 #endif

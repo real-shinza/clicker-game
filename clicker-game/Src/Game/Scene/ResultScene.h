@@ -1,12 +1,15 @@
 #ifndef RESULT_SCENE_H
 #define RESULT_SCENE_H
 
-class ResultScene
+#include "SceneBase.h"
+
+class ResultScene : public SceneBase
 {
 public:
-    void Init();
-    void Update();
-    void Draw();
+    ResultScene(Graphic& graphic) : SceneBase(graphic) {};
+
+    void Update() override;
+    void Draw() override;
 };
 
 #endif

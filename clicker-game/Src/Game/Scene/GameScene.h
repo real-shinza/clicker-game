@@ -1,12 +1,15 @@
 #ifndef GAME_SCENE_H
 #define GAME_SCENE_H
 
-class GameScene
+#include "SceneBase.h"
+
+class GameScene : public SceneBase
 {
 public:
-    void Init();
-    void Update();
-    void Draw();
+    GameScene(Graphic& graphic) : SceneBase(graphic) {};
+
+    void Update() override;
+    void Draw() override;
 };
 
 #endif

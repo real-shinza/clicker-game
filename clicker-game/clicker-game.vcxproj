@@ -26,7 +26,6 @@
     <ClCompile Include="Src\Game\Game.cpp" />
     <ClCompile Include="Src\Game\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Game\Scene\ResultScene.cpp" />
-    <ClCompile Include="Src\Game\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Game\Scene\TitleScene.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
@@ -38,7 +37,7 @@
     <ClInclude Include="Src\Game\Game.h" />
     <ClInclude Include="Src\Game\Scene\GameScene.h" />
     <ClInclude Include="Src\Game\Scene\ResultScene.h" />
-    <ClInclude Include="Src\Game\Scene\SceneManager.h" />
+    <ClInclude Include="Src\Game\Scene\SceneBase.h" />
     <ClInclude Include="Src\Game\Scene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>

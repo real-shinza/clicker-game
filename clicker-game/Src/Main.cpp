@@ -6,15 +6,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     Window window;
     Graphic graphic;
-    Game game;
+    Game game(graphic);
 
     // 初期化
     if (!window.Init(hInstance, nCmdShow)) return 0;
     if (!graphic.Init()) return 0;
     game.Init();
-
-    // テクスチャ読み込み
-    graphic.LoadTexture("Enemy", L"Assets/Img/Enemy.png");
 
     while (true)
     {
@@ -26,7 +23,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         // 描画処理
         graphic.BeginRendering();
         game.Draw();
-        graphic.DrawTexture("Enemy", 0.0f, 0.0f);
         graphic.EndRendering();
     }
 
