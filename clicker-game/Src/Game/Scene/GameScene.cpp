@@ -1,7 +1,8 @@
 #include "GameScene.h"
 
-void GameScene::Update()
+SceneType GameScene::Update()
 {
+    return SceneType::Game;
 }
 
 void GameScene::Draw()

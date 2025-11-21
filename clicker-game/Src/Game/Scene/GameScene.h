@@ -6,9 +6,9 @@
 class GameScene : public SceneBase
 {
 public:
-    GameScene(Graphic& graphic) : SceneBase(graphic) {};
+    GameScene(Graphic& graphic, Input& input) : SceneBase(graphic, input) {};
 
-    void Update() override;
+    SceneType Update() override;
     void Draw() override;
 };
 

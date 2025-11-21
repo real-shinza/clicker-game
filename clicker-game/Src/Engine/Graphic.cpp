@@ -391,7 +391,7 @@ bool Graphic::CreateTextFormat()
 
     // テキストフォーマット作成
     hr = m_pDWriteFactory->CreateTextFormat(
-        L"メイリオ",
+        L"Meiryo",
         nullptr,
         DWRITE_FONT_WEIGHT_NORMAL,
         DWRITE_FONT_STYLE_NORMAL,
@@ -541,7 +541,31 @@ void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF
     // 描画開始
     m_pD2DRenderTarget->BeginDraw();
 
-    D2D1_RECT_F layoutRect = D2D1::RectF(x, y, x + 1000, y + 200);
+    // テキストレイアウトを作成
+    IDWriteTextLayout* pTextLayout = nullptr;
+    HRESULT hr = m_pDWriteFactory->CreateTextLayout(
+        text.c_str(),
+        text.size(),
+        m_pTextFormat,
+        1000.0f,
+        200.0f,
+        &pTextLayout
+    );
+
+    // 座標補正
+    DWRITE_TEXT_METRICS metrics;
+    pTextLayout->GetMetrics(&metrics);
+    float textWidth = metrics.width;
+    float textHeight = metrics.height;
+    float centerX = Window::WINDOW_WIDTH / 2.0f;
+    float centerY = Window::WINDOW_HEIGHT / 2.0f;
+    float left = centerX + x - textWidth / 2.0f;
+    float top = centerY + y - textHeight / 2.0f;
+    float right = left + textWidth;
+    float bottom = top + textHeight;
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, right, bottom);
+
+    // 描画
     m_pD2DRenderTarget->DrawTextW(
         text.c_str(),
         text.size(),

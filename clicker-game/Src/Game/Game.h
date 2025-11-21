@@ -3,22 +3,16 @@
 
 #include <memory>
 #include "../Engine/Graphic.h"
+#include "../Engine/Input.h"
 #include "Scene/SceneBase.h"
 #include "Scene/TitleScene.h"
 #include "Scene/GameScene.h"
 #include "Scene/ResultScene.h"
 
-enum class SceneType
-{
-    Title,
-    Game,
-    Result,
-};
-
 class Game
 {
 public:
-    Game(Graphic& graphic);
+    Game(Graphic& graphic, Input& input);
 
     void Init();
     void Update();
@@ -28,7 +22,9 @@ private:
     void ChangeScene(SceneType nextScene);
 
 private:
+    SceneType m_currentType;
     Graphic& m_graphic;
+    Input& m_input;
     std::unique_ptr<SceneBase> m_currentScene;
 };
 

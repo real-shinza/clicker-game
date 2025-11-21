@@ -6,9 +6,9 @@
 class TitleScene : public SceneBase
 {
 public:
-    TitleScene(Graphic& graphic) : SceneBase(graphic) {};
+    TitleScene(Graphic& graphic, Input& input) : SceneBase(graphic, input) {};
 
-    void Update() override;
+    SceneType Update() override;
     void Draw() override;
 };
 

@@ -6,9 +6,9 @@
 class ResultScene : public SceneBase
 {
 public:
-    ResultScene(Graphic& graphic) : SceneBase(graphic) {};
+    ResultScene(Graphic& graphic, Input& input) : SceneBase(graphic, input) {};
 
-    void Update() override;
+    SceneType Update() override;
     void Draw() override;
 };
 

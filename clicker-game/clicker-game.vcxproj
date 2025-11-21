@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Engine\Graphic.cpp" />
+    <ClCompile Include="Src\Engine\Input.cpp" />
     <ClCompile Include="Src\Engine\Window.cpp" />
     <ClCompile Include="Src\Game\Enemy\EnemiesManager.cpp" />
     <ClCompile Include="Src\Game\Enemy\Enemy.cpp" />
@@ -31,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine\Graphic.h" />
+    <ClInclude Include="Src\Engine\Input.h" />
     <ClInclude Include="Src\Engine\Window.h" />
     <ClInclude Include="Src\Game\Enemy\EnemiesManager.h" />
     <ClInclude Include="Src\Game\Enemy\Enemy.h" />
@@ -151,6 +153,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

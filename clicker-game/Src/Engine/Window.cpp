@@ -15,7 +15,7 @@ bool Window::Init(HINSTANCE hInstance, int nCmdShow)
     HWND hWnd = CreateWindow(
         wc.lpszClassName,
         Window::CLASS_NAME,
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         Window::WINDOW_WIDTH,
@@ -36,7 +36,7 @@ bool Window::Init(HINSTANCE hInstance, int nCmdShow)
     return true;
 }
 
-bool Window::Update()
+bool Window::Update(Input& m_input)
 {
     MSG msg;
 
@@ -52,6 +52,7 @@ bool Window::Update()
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+            m_input.Update(msg);
         }
     }
 

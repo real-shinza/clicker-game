@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include <windows.h>
+#include "Input.h"
 
 class Window
 {
@@ -15,7 +16,7 @@ public:
     /// ウィンドウ更新
     /// </summary>
     /// <returns>ウィンドウ閉じられたか</returns>
-    bool Update();
+    bool Update(Input& m_input);
 
 private:
     /// <summary>

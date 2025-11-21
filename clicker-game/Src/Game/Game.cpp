@@ -1,8 +1,10 @@
 #include "Game.h"
 
-Game::Game(Graphic& graphic) : m_graphic(graphic)
+Game::Game(Graphic& graphic, Input& input) : m_graphic(graphic), m_input(input)
 {
-    ChangeScene(SceneType::Title);
+    SceneType startScene = SceneType::Title;
+    m_currentType = startScene;
+    ChangeScene(startScene);
 }
 
 void Game::Init()
@@ -12,7 +14,9 @@ void Game::Init()
 
 void Game::Update()
 {
-    m_currentScene->Update();
+    SceneType next = m_currentScene->Update();
+    if (next != m_currentType)
+        ChangeScene(next);
 }
 
 void Game::Draw()
@@ -22,16 +26,18 @@ void Game::Draw()
 
 void Game::ChangeScene(SceneType nextScene)
 {
+    m_currentType = nextScene;
+
     switch (nextScene)
     {
     case SceneType::Title:
-        m_currentScene = std::make_unique<TitleScene>(m_graphic);
+        m_currentScene = std::make_unique<TitleScene>(m_graphic, m_input);
         break;
     case SceneType::Game:
-        m_currentScene = std::make_unique<GameScene>(m_graphic);
+        m_currentScene = std::make_unique<GameScene>(m_graphic, m_input);
         break;
     case SceneType::Result:
-        m_currentScene = std::make_unique<ResultScene>(m_graphic);
+        m_currentScene = std::make_unique<ResultScene>(m_graphic, m_input);
         break;
     }
 }
