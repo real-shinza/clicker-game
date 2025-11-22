@@ -15,6 +15,7 @@ void Input::Update(MSG& msg)
     case WM_LBUTTONDOWN:
         if (!m_isMouseHeld)
             m_isMousePressed = true;
+        m_isMouseHeld = true;
         break;
     case WM_LBUTTONUP:
         m_isMouseHeld = false;

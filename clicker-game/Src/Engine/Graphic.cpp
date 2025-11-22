@@ -560,9 +560,9 @@ void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF
     float centerX = Window::WINDOW_WIDTH / 2.0f;
     float centerY = Window::WINDOW_HEIGHT / 2.0f;
     float left = centerX + x - textWidth / 2.0f;
-    float top = centerY + y - textHeight / 2.0f;
+    float top = centerY + y + textHeight / 2.0f;
     float right = left + textWidth;
-    float bottom = top + textHeight;
+    float bottom = top - textHeight;
     D2D1_RECT_F layoutRect = D2D1::RectF(left, top, right, bottom);
 
     // 描画

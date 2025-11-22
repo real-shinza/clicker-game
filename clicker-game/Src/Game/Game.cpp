@@ -27,6 +27,7 @@ void Game::Draw()
 void Game::ChangeScene(SceneType nextScene)
 {
     m_currentType = nextScene;
+    m_input.Init();
 
     switch (nextScene)
     {
