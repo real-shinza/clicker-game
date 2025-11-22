@@ -2,7 +2,10 @@
 #define ENEMIES_MANAGER_H
 
 #include <list>
+#include <iostream>
+#include <random>
 #include "Enemy.h"
+#include "../../Engine/Window.h"
 
 class EnemiesManager
 {
@@ -12,10 +15,16 @@ public:
 
     void Init();
     void Update();
-    void Draw();
 
 private:
-    std::list<Enemy*> m_Enemies;
+    void GenerateEnemy();
+
+public:
+    std::list<Enemy*> GetEnemies() { return m_pEnemies; }
+
+private:
+    std::list<Enemy*> m_pEnemies;
+    int generateSpan;
 };
 
 #endif

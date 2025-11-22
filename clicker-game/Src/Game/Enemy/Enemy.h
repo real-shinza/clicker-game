@@ -4,20 +4,18 @@
 class Enemy
 {
 public:
-    Enemy();
-    ~Enemy();
+    Enemy(float x, float y);
 
-    void Update();
-    void Draw();
+    bool Update();
 
 private:
-    float m_Lifespan;
-    int m_PosX;
-    int m_PosY;
+    float m_lifespan;
+    float m_posX;
+    float m_posY;
 
 public:
-    int GetPosX() const { return m_PosX; }
-    int GetPosY() const { return m_PosY; }
+    float GetPosX() const { return m_posX; }
+    float GetPosY() const { return m_posY; }
 };
 
 #endif

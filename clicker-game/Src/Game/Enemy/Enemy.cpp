@@ -1,17 +1,16 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy(float x, float y)
 {
+    m_lifespan = 480;
+    m_posX = x;
+    m_posY = y;
 }
 
-Enemy::~Enemy()
+bool Enemy::Update()
 {
-}
+    if (m_lifespan-- <= 0)
+        return true;
 
-void Enemy::Update()
-{
-}
-
-void Enemy::Draw()
-{
+    return false;
 }
