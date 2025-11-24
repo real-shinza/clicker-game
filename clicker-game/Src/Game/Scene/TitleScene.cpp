@@ -3,10 +3,7 @@
 SceneType TitleScene::Update()
 {
     if (m_input.GetIsMousePressed())
-    {
         return SceneType::Game;
-    }
-
     return SceneType::Title;
 }
 

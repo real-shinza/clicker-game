@@ -2,6 +2,7 @@
 #define GAME_SCENE_H
 
 #include <sstream>
+#include <iomanip>
 #include <chrono>
 #include "SceneBase.h"
 #include "../Enemy/EnemiesManager.h"
@@ -19,6 +20,7 @@ private:
     double m_timeLimit;
     int m_remaining;
     EnemiesManager m_pEnemies;
+    int m_killCount;
 };
 
 #endif

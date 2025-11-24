@@ -20,26 +20,6 @@ void EnemiesManager::Init()
     generateSpan = 0;
 }
 
-void EnemiesManager::Update()
-{
-    // エネミー生成
-    GenerateEnemy();
-
-    // エネミー更新
-    for (auto it = m_pEnemies.begin(); it != m_pEnemies.end();)
-    {
-        if ((*it)->Update())
-        {
-            delete* it;
-            it = m_pEnemies.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
-}
-
 void EnemiesManager::GenerateEnemy()
 {
     if (generateSpan-- > 0) return;
@@ -55,4 +35,38 @@ void EnemiesManager::GenerateEnemy()
     float x = distX(gen);
     float y = distY(gen);
     m_pEnemies.push_back(new Enemy(x, y));
+}
+
+void EnemiesManager::ReduceLifespan()
+{
+    for (Enemy* enemy : m_pEnemies)
+    {
+        enemy->ReduceLifespan();
+    }
+}
+
+bool EnemiesManager::CheckHit(float x, float y)
+{
+    for (Enemy* enemy : m_pEnemies)
+    {
+        if (enemy->IsHit(x, y))
+            return true;
+    }
+    return false;
+}
+
+void EnemiesManager::CheckDie()
+{
+    for (auto enemy = m_pEnemies.begin(); enemy != m_pEnemies.end();)
+    {
+        if ((*enemy)->GetIsDie())
+        {
+            delete* enemy;
+            enemy = m_pEnemies.erase(enemy);
+        }
+        else
+        {
+            ++enemy;
+        }
+    }
 }

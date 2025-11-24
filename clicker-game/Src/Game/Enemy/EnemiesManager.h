@@ -14,10 +14,10 @@ public:
     ~EnemiesManager();
 
     void Init();
-    void Update();
-
-private:
     void GenerateEnemy();
+    void ReduceLifespan();
+    bool CheckHit(float x, float y);
+    void CheckDie();
 
 public:
     std::list<Enemy*> GetEnemies() { return m_pEnemies; }

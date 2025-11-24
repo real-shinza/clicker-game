@@ -436,8 +436,8 @@ void Graphic::InitMatrix()
     XMMATRIX ortho = XMMatrixOrthographicOffCenterLH(
         -halfW,
         halfW,
-        halfH,
         -halfH,
+        halfH,
         0.0f,
         1.0f
     );
@@ -503,10 +503,10 @@ void Graphic::DrawTexture(std::string name, float x, float y)
 
     Vertex vertices[4] =
     {
-        { { x - w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,0 } },
-        { { x + w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,0 } },
-        { { x - w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,1 } },
-        { { x + w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,1 } }
+        { { x - w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,0 } },
+        { { x + w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,0 } },
+        { { x - w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,1 } },
+        { { x + w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,1 } }
     };
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
