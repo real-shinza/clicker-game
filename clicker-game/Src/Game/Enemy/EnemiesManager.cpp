@@ -16,7 +16,7 @@ EnemiesManager::~EnemiesManager()
 
 void EnemiesManager::Init()
 {
-    m_pEnemies.push_back(new Enemy(0, 0));
+    srand((unsigned int)time(NULL));
     generateSpan = 0;
 }
 
@@ -24,16 +24,10 @@ void EnemiesManager::GenerateEnemy()
 {
     if (generateSpan-- > 0) return;
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distSpan(30, 90);
-    std::uniform_int_distribution<> distX(-Window::WINDOW_WIDTH / 2, Window::WINDOW_WIDTH / 2);
-    std::uniform_int_distribution<> distY(-Window::WINDOW_HEIGHT / 2, Window::WINDOW_HEIGHT / 2);
+    generateSpan = rand() % 70 + 10;
 
-    generateSpan = distSpan(gen);
-
-    float x = distX(gen);
-    float y = distY(gen);
+    float x = rand() % (int)(Window::WINDOW_WIDTH - Enemy::WIDTH);
+    float y = rand() % (int)(Window::WINDOW_HEIGHT - Enemy::HEIGHT);
     m_pEnemies.push_back(new Enemy(x, y));
 }
 

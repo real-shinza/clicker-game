@@ -16,11 +16,11 @@ void Enemy::ReduceLifespan()
 
 bool Enemy::IsHit(float x, float y)
 {
-    float left = m_posX - (WIDTH / 2.0f);
-    float right = m_posX + (WIDTH / 2.0f);
-    float top = m_posY + (HEIGHT / 2.0f);
-    float bottom = m_posY - (HEIGHT / 2.0f);
-    bool isHit = x >= left && x <= right && y <= top && y >= bottom;
+    float left = m_posX;
+    float top = m_posY;
+    float right = m_posX + WIDTH;
+    float bottom = m_posY + HEIGHT;
+    bool isHit = x >= left && x <= right && y >= top && y <= bottom;
     if (isHit)
         m_isDie = true;
     return isHit;

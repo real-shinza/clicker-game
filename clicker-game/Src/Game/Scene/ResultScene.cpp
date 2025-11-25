@@ -9,5 +9,5 @@ SceneType ResultScene::Update()
 
 void ResultScene::Draw()
 {
-    m_graphic.DrawString(L"画面クリックでタイトルへ戻る", 0.0f, 0.0f, D2D1::ColorF::Black);
+    m_graphic.DrawString(L"画面クリックでタイトルへ戻る", 176, 276, D2D1::ColorF::Black);
 }

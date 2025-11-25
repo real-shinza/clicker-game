@@ -18,8 +18,8 @@ SceneType GameScene::Update()
     // エネミー処理
     m_pEnemies.GenerateEnemy();
     m_pEnemies.ReduceLifespan();
-    float x = m_input.GetMousePos().x - (Window::WINDOW_WIDTH / 2.0f);
-    float y = (Window::WINDOW_HEIGHT / 2.0f) - m_input.GetMousePos().y;
+    float x = m_input.GetMousePos().x;
+    float y = m_input.GetMousePos().y;
     if (m_input.GetIsMousePressed() && m_pEnemies.CheckHit(x, y))
         m_killCount++;
     m_pEnemies.CheckDie();
@@ -34,16 +34,17 @@ void GameScene::Draw()
     // エネミーを描画
     for (Enemy* enemy : m_pEnemies.GetEnemies())
     {
-        m_graphic.DrawTexture("Enemy", enemy->GetPosX(), enemy->GetPosY());
+        // m_graphic.DrawTexture("Enemy", enemy->GetPosX(), enemy->GetPosY());
     }
+    m_graphic.DrawTexture("Enemy", 736, 536);
 
     // 残り時間を描画
     std::wstringstream time;
     time << L"残り" << m_remaining << L"秒";
-    m_graphic.DrawString(time.str(), 330.0f, 230.0f, D2D1::ColorF::Black);
+    m_graphic.DrawString(time.str(), 660, 0, D2D1::ColorF::Black);
 
     // 倒した数を描画
     std::wstringstream killCount;
     killCount << L"クリックした数：" << std::setw(2) << std::setfill(L'0') << m_killCount;
-    m_graphic.DrawString(killCount.str(), 250.0f, 270.0f, D2D1::ColorF::Black);
+    m_graphic.DrawString(killCount.str(), 500, 48, D2D1::ColorF::Black);
 }

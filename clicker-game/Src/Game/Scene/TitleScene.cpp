@@ -9,5 +9,5 @@ SceneType TitleScene::Update()
 
 void TitleScene::Draw()
 {
-    m_graphic.DrawString(L"画面クリックでゲーム開始", 0.0f, 0.0f, D2D1::ColorF::Black);
+    m_graphic.DrawString(L"画面クリックでゲーム開始", 208, 276, D2D1::ColorF::Black);
 }

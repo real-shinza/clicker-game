@@ -14,8 +14,10 @@ private:
     float m_posX;
     float m_posY;
     bool m_isDie;
-    const float WIDTH = 64.0f;
-    const float HEIGHT = 64.0f;
+
+public:
+    inline static const float WIDTH = 64;
+    inline static const float HEIGHT = 64;
 
 public:
     float GetPosX() const { return m_posX; }

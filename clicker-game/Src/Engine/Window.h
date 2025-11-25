@@ -26,8 +26,8 @@ private:
 
 public:
     inline static const wchar_t* CLASS_NAME = L"Clicker Game";
-    static const int WINDOW_WIDTH = 800;
-    static const int WINDOW_HEIGHT = 600;
+    inline static const float WINDOW_WIDTH = 800;
+    inline static const float WINDOW_HEIGHT = 600;
 };
 
 #endif

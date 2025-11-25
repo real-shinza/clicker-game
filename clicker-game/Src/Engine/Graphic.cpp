@@ -171,8 +171,8 @@ bool Graphic::CreateRenderTargetView()
     ZeroMemory(&viewport, sizeof(viewport));
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    viewport.Width = Window::WINDOW_WIDTH;
-    viewport.Height = Window::WINDOW_HEIGHT;
+    viewport.Width = static_cast<float>(Window::WINDOW_WIDTH);
+    viewport.Height = static_cast<float>(Window::WINDOW_HEIGHT);
     viewport.MinDepth = D3D11_MIN_DEPTH;
     viewport.MaxDepth = D3D11_MAX_DEPTH;
     m_pContext->RSSetViewports(1, &viewport);
@@ -431,13 +431,11 @@ bool Graphic::CreateTextFormat()
 void Graphic::InitMatrix()
 {
     // GPUへ転送
-    float halfW = Window::WINDOW_WIDTH * 0.5f;
-    float halfH = Window::WINDOW_HEIGHT * 0.5f;
     XMMATRIX ortho = XMMatrixOrthographicOffCenterLH(
-        -halfW,
-        halfW,
-        -halfH,
-        halfH,
+        0.0f,
+        static_cast<float>(Window::WINDOW_WIDTH),
+        static_cast<float>(Window::WINDOW_HEIGHT),
+        0.0f,
         0.0f,
         1.0f
     );
@@ -450,11 +448,13 @@ void Graphic::BeginRendering()
     // レンダーターゲットビューをクリア
     const float color[] = { 0.9f, 0.9f, 0.9f, 1.0f };
     m_pContext->ClearRenderTargetView(m_pRenderTargetView, color);
+    m_pD2DRenderTarget->BeginDraw();
 }
 
 void Graphic::EndRendering()
 {
     // 描画
+    m_pD2DRenderTarget->EndDraw();
     m_pSwapChain->Present(1, 0);
 }
 
@@ -495,18 +495,18 @@ void Graphic::DrawTexture(std::string name, float x, float y)
 
     D3D11_TEXTURE2D_DESC texDesc;
     pTex2D->GetDesc(&texDesc);
-    float w = static_cast<float>(texDesc.Width) * 0.5f;
-    float h = static_cast<float>(texDesc.Height) * 0.5f;
+    float w = static_cast<float>(texDesc.Width);
+    float h = static_cast<float>(texDesc.Height);
 
     pTex2D->Release();
     pResource->Release();
 
     Vertex vertices[4] =
     {
-        { { x - w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,0 } },
-        { { x + w, y + h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,0 } },
-        { { x - w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 0,1 } },
-        { { x + w, y - h, 0.0f, 1.0f }, { 1,1,1,1 }, { 1,1 } }
+        { { x,     y,     0.0f, 1.0f }, {1,1,1,1}, {0,0} },
+        { { x + w, y,     0.0f, 1.0f }, {1,1,1,1}, {1,0} },
+        { { x,     y + h, 0.0f, 1.0f }, {1,1,1,1}, {0,1} },
+        { { x + w, y + h, 0.0f, 1.0f }, {1,1,1,1}, {1,1} }
     };
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -538,9 +538,6 @@ void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF
 
     m_pBrush->SetColor(color);
 
-    // 描画開始
-    m_pD2DRenderTarget->BeginDraw();
-
     // テキストレイアウトを作成
     IDWriteTextLayout* pTextLayout = nullptr;
     HRESULT hr = m_pDWriteFactory->CreateTextLayout(
@@ -557,12 +554,10 @@ void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF
     pTextLayout->GetMetrics(&metrics);
     float textWidth = metrics.width;
     float textHeight = metrics.height;
-    float centerX = Window::WINDOW_WIDTH / 2.0f;
-    float centerY = Window::WINDOW_HEIGHT / 2.0f;
-    float left = centerX + x - textWidth / 2.0f;
-    float top = centerY - y - textHeight / 2.0f;
-    float right = left + textWidth;
-    float bottom = top + textHeight;
+    float left = x;
+    float top = y;
+    float right = x + textWidth;
+    float bottom = y + textHeight;
     D2D1_RECT_F layoutRect = D2D1::RectF(left, top, right, bottom);
 
     // 描画
@@ -573,7 +568,4 @@ void Graphic::DrawString(const std::wstring text, float x, float y, D2D1::ColorF
         &layoutRect,
         m_pBrush
     );
-
-    // 描画終了
-    m_pD2DRenderTarget->EndDraw();
 }

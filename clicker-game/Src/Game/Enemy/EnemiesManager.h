@@ -2,7 +2,6 @@
 #define ENEMIES_MANAGER_H
 
 #include <list>
-#include <iostream>
 #include <random>
 #include "Enemy.h"
 #include "../../Engine/Window.h"
